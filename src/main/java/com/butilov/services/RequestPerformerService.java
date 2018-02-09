@@ -5,6 +5,7 @@ import com.butilov.entities.ApiResponse;
 import com.butilov.entities.RateObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -20,9 +21,12 @@ import java.net.URL;
  */
 @Service
 public class RequestPerformerService {
-    private static Gson gson = new GsonBuilder()
-            .registerTypeAdapter(RateObject.class, new RatesDeserializerService())
-            .create();
+    @Autowired
+    public RequestPerformerService(RatesDeserializerService ratesDeserializerService) {
+        gson = new GsonBuilder()
+                .registerTypeAdapter(RateObject.class, ratesDeserializerService)
+                .create();
+    }
 
     public ApiResponse performGetRequest(String fromCurrency, String toCurrency) {
         URL url;
@@ -58,4 +62,6 @@ public class RequestPerformerService {
             return null;
         }
     }
+
+    private Gson gson;
 }
