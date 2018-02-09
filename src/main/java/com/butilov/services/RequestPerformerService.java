@@ -1,5 +1,6 @@
 package com.butilov.services;
 
+import com.butilov.StringConstants;
 import com.butilov.entities.ApiResponse;
 import com.butilov.entities.RateObject;
 import com.google.gson.Gson;
@@ -19,11 +20,6 @@ import java.net.URL;
  */
 @Service
 public class RequestPerformerService {
-    private static final String API_URL = "http://api.fixer.io/latest?base=%1$s&symbols=%2$s";
-    private static final String DATA_FROM_URL = "Data from api.fixer.io";
-    private static final String WRONG_URL = "Wrong url";
-    private static final String ERROR = "Error";
-
     private static Gson gson = new GsonBuilder()
             .registerTypeAdapter(RateObject.class, new RatesDeserializerService())
             .create();
@@ -32,9 +28,9 @@ public class RequestPerformerService {
         URL url;
 
         try {
-            url = new URL(String.format(API_URL, fromCurrency, toCurrency));
+            url = new URL(String.format(StringConstants.API_URL, fromCurrency, toCurrency));
         } catch (MalformedURLException exception) {
-            System.err.println(WRONG_URL);
+            System.err.println(StringConstants.WRONG_URL);
             return null;
         }
         try {
@@ -51,14 +47,14 @@ public class RequestPerformerService {
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     ApiResponse apiResponse = gson.fromJson(br, ApiResponse.class);
                     br.close();
-                    System.out.println("\n" + DATA_FROM_URL);
+                    System.out.println("\n" + StringConstants.DATA_FROM_URL);
                     return apiResponse;
                 default:
                     return null;
             }
 
         } catch (IOException exception) {
-            System.err.println(ERROR);
+            System.err.println(StringConstants.ERROR);
             return null;
         }
     }

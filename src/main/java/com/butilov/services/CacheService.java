@@ -1,5 +1,6 @@
 package com.butilov.services;
 
+import com.butilov.StringConstants;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -10,10 +11,6 @@ import java.io.*;
  */
 @Service
 public class CacheService {
-    private static final String CACHE_READ_SUCCESS = "Data from cache";
-    private static final String SAVE_FILE_ERROR = "Error. File not saved.";
-    private static final String DIRECTORY_CREATION_ERROR = "Error. Directory not created.";
-
     public String getDataFromFile(String fromCurrency, String toCurrency) {
         BufferedReader bufferedReader;
         try {
@@ -29,7 +26,7 @@ public class CacheService {
             }
 
             bufferedReader.close();
-            System.out.println("\n" + CACHE_READ_SUCCESS);
+            System.out.println("\n" + StringConstants.CACHE_READ_SUCCESS);
             return sb.toString();
         } catch (IOException exception) {
             return null;
@@ -42,12 +39,12 @@ public class CacheService {
         try {
             File file = new File(getCachedFileName(fromCurrency, toCurrency));
             if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                throw new IllegalStateException(DIRECTORY_CREATION_ERROR);
+                throw new IllegalStateException(StringConstants.DIRECTORY_CREATION_ERROR);
             }
             printWriter = new PrintWriter(getCachedFileName(fromCurrency, toCurrency));
             printWriter.println(data);
         } catch (FileNotFoundException exception) {
-            System.err.println(SAVE_FILE_ERROR);
+            System.err.println(StringConstants.SAVE_FILE_ERROR);
         } catch (IllegalStateException exception) {
             System.err.println(exception.getMessage());
         } finally {

@@ -1,5 +1,6 @@
 package com.butilov.controller;
 
+import com.butilov.StringConstants;
 import com.butilov.entities.ApiResponse;
 import com.butilov.entities.CurrencyEnum;
 import com.butilov.services.CacheService;
@@ -16,11 +17,6 @@ import java.util.concurrent.Executors;
  */
 @Controller
 public class ConsoleController {
-    private static final String WRONG_CURRENCY_FORMAT_ERROR = "Error. Wrong currency format";
-    private static final String FROM_CURRENCY = "From currency:";
-    private static final String TO_CURRENCY = "To currency:";
-    private static final String ERROR = "Error";
-
     public ConsoleController(CacheService mCacheService, RequestPerformerService mRequestPerformerService) {
         this.mCacheService = mCacheService;
         this.mRequestPerformerService = mRequestPerformerService;
@@ -35,7 +31,7 @@ public class ConsoleController {
             currency = scanner.nextLine().toUpperCase();
 
             if (!CurrencyEnum.isValidCurrency(currency)) {
-                System.err.println(WRONG_CURRENCY_FORMAT_ERROR);
+                System.err.println(StringConstants.WRONG_CURRENCY_FORMAT_ERROR);
             }
         } while (!CurrencyEnum.isValidCurrency(currency));
 
@@ -43,8 +39,8 @@ public class ConsoleController {
     }
 
     public void convert() {
-        final String fromCurrency = inputCurrency(FROM_CURRENCY);
-        final String toCurrency = inputCurrency(TO_CURRENCY);
+        final String fromCurrency = inputCurrency(StringConstants.FROM_CURRENCY);
+        final String toCurrency = inputCurrency(StringConstants.TO_CURRENCY);
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
@@ -57,7 +53,7 @@ public class ConsoleController {
                     System.out.println(apiResponse.toString());
                     mCacheService.saveDataToFile(apiResponse.toString(), fromCurrency, toCurrency);
                 } else {
-                    System.out.println(ERROR);
+                    System.out.println(StringConstants.ERROR);
                 }
             }
         });
