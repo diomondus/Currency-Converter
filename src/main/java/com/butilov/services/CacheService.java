@@ -1,6 +1,5 @@
 package com.butilov.services;
 
-import com.butilov.StringConstants;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -34,19 +33,17 @@ public class CacheService {
         }
     }
 
-    public void saveDataToFile(String data, String fromCurrency, String toCurrency) {
+    public void saveDataToFile(String data, String fromCurrency, String toCurrency) throws FileNotFoundException {
         PrintWriter printWriter = null;
         String cachedFileName = getCachedFileName(fromCurrency, toCurrency);
         File file = new File(cachedFileName);
 
         try {
             if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                throw new IllegalStateException(StringConstants.DIRECTORY_CREATION_ERROR);
+                throw new IllegalStateException();
             }
             printWriter = new PrintWriter(cachedFileName);
             printWriter.println(data);
-        } catch (FileNotFoundException exception) {
-            System.err.println(StringConstants.SAVE_FILE_ERROR);
         } catch (IllegalStateException exception) {
             System.err.println(exception.getMessage());
         } finally {
