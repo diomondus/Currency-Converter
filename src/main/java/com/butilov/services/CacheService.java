@@ -4,6 +4,8 @@ import com.butilov.StringConstants;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by Dmitry Butilov
@@ -35,13 +37,14 @@ public class CacheService {
 
     public void saveDataToFile(String data, String fromCurrency, String toCurrency) {
         PrintWriter printWriter = null;
+        String cachedFileName = getCachedFileName(fromCurrency, toCurrency);
+        File file = new File(cachedFileName);
 
         try {
-            File file = new File(getCachedFileName(fromCurrency, toCurrency));
             if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
                 throw new IllegalStateException(StringConstants.DIRECTORY_CREATION_ERROR);
             }
-            printWriter = new PrintWriter(getCachedFileName(fromCurrency, toCurrency));
+            printWriter = new PrintWriter(cachedFileName);
             printWriter.println(data);
         } catch (FileNotFoundException exception) {
             System.err.println(StringConstants.SAVE_FILE_ERROR);
@@ -55,6 +58,22 @@ public class CacheService {
     }
 
     private String getCachedFileName(String fromCurrency, String toCurrency) {
-        return "cache/" + fromCurrency + "-" + toCurrency + ".txt";
+        return "cache/" + getCurrentDate() + "/" + fromCurrency + "-" + toCurrency + ".txt";
+    }
+
+    private String getCurrentDate() {
+        Calendar instance = Calendar.getInstance(TimeZone.getTimeZone("CET"));
+        int cetHour = instance.get(Calendar.HOUR_OF_DAY);
+        if (cetHour < 16) {
+            instance.add(Calendar.DATE, -1);
+        }
+        int year = instance.get(Calendar.YEAR);
+        int month = instance.get(Calendar.MONTH) + 1;
+        int day = instance.get(Calendar.DAY_OF_MONTH);
+
+        String sMonth = month < 10 ? "0" + month : String.valueOf(month);
+        String sDay = day < 10 ? "0" + day : String.valueOf(day);
+
+        return year + "-" + sMonth + "-" + sDay;
     }
 }

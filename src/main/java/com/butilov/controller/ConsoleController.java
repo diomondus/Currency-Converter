@@ -46,7 +46,7 @@ public class ConsoleController {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             String cachedData = mCacheService.getDataFromFile(fromCurrency, toCurrency);
-            if (cachedData != null) { // todo сделать проверку на сегодняшнее число
+            if (cachedData != null) {
                 System.out.println(cachedData);
             } else {
                 ApiResponse apiResponse = null;
