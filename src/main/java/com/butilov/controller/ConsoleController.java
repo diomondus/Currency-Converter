@@ -7,7 +7,6 @@ import com.butilov.services.CacheService;
 import com.butilov.services.RESTClient;
 import org.springframework.stereotype.Controller;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -63,7 +62,7 @@ public class ConsoleController {
                     System.out.println(apiResponse.toString());
                     try {
                         mCacheService.saveDataToFile(apiResponse.toString(), fromCurrency, toCurrency);
-                    } catch (FileNotFoundException ex) {
+                    } catch (IOException ex) {
                         System.err.println(res.getString(Constants.DIRECTORY_CREATION_ERROR));
                     }
                 }

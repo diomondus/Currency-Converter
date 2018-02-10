@@ -2,7 +2,12 @@ package com.butilov.services;
 
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -13,43 +18,41 @@ import java.util.TimeZone;
 @Service
 public class CacheService {
     public String getDataFromFile(String fromCurrency, String toCurrency) {
-        BufferedReader bufferedReader;
-        try {
-            String cachedFileName = getCachedFileName(fromCurrency, toCurrency);
-            bufferedReader = new BufferedReader(new FileReader(cachedFileName));
 
-            StringBuilder sb = new StringBuilder();
+        String cachedFileName = getCachedFileName(fromCurrency, toCurrency);
+        Path path = Paths.get(cachedFileName);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try (BufferedReader bufferedReader = Files.newBufferedReader(path)) {
             String line = bufferedReader.readLine();
 
             while (line != null) {
-                sb.append(line);
+                stringBuilder.append(line);
                 line = bufferedReader.readLine();
             }
-
-            bufferedReader.close();
-            return sb.toString();
-        } catch (IOException exception) {
+        } catch (IOException e) {
+            System.err.println();
             return null;
         }
+        return stringBuilder.toString();
     }
 
-    public void saveDataToFile(String data, String fromCurrency, String toCurrency) throws FileNotFoundException {
-        PrintWriter printWriter = null;
-        String cachedFileName = getCachedFileName(fromCurrency, toCurrency);
-        File file = new File(cachedFileName);
+    public void saveDataToFile(String data, String fromCurrency, String toCurrency) throws IOException {
 
+        String cachedFileName = getCachedFileName(fromCurrency, toCurrency);
+        Path path = Paths.get(cachedFileName);
+        Path parentPath = path.getParent();
+        Path grandParentPath = parentPath.getParent();
         try {
-            if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                throw new IllegalStateException();
-            }
-            printWriter = new PrintWriter(cachedFileName);
-            printWriter.println(data);
-        } catch (IllegalStateException exception) {
-            System.err.println(exception.getMessage());
-        } finally {
-            if (printWriter != null) {
-                printWriter.close();
-            }
+            Files.createDirectory(grandParentPath);
+        } catch (IOException ignore) {
+        }
+        try {
+            Files.createDirectory(parentPath);
+        } catch (IOException ignore) {
+        }
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path)) {
+            bufferedWriter.write(data);
         }
     }
 
