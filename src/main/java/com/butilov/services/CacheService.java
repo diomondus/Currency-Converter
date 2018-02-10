@@ -28,7 +28,6 @@ public class CacheService {
             }
 
             bufferedReader.close();
-            System.out.println("\n" + StringConstants.CACHE_READ_SUCCESS);
             return sb.toString();
         } catch (IOException exception) {
             return null;

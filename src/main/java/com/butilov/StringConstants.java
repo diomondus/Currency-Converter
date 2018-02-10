@@ -12,5 +12,5 @@ public class StringConstants {
     public static final String CACHE_READ_SUCCESS = "Data from cache";
     public static final String SAVE_FILE_ERROR = "Error. File not saved";
     public static final String DIRECTORY_CREATION_ERROR = "Error. Directory not created";
-    public static final String DATA_FROM_URL = "Data from api.fixer.io";
+    public static final String WEB_ACCESS_SUCCESS = "Data from api.fixer.io";
 }

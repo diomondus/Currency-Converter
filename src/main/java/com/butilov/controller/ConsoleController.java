@@ -47,6 +47,7 @@ public class ConsoleController {
         executorService.submit(() -> {
             String cachedData = mCacheService.getDataFromFile(fromCurrency, toCurrency);
             if (cachedData != null) {
+                System.out.println("\n" + StringConstants.CACHE_READ_SUCCESS);
                 System.out.println(cachedData);
             } else {
                 ApiResponse apiResponse = null;
@@ -56,6 +57,7 @@ public class ConsoleController {
                     System.out.println(StringConstants.ERROR);
                 }
                 if (apiResponse != null) {
+                    System.out.println("\n" + StringConstants.WEB_ACCESS_SUCCESS);
                     System.out.println(apiResponse.toString());
                     mCacheService.saveDataToFile(apiResponse.toString(), fromCurrency, toCurrency);
                 }
