@@ -4,9 +4,10 @@ import com.butilov.StringConstants;
 import com.butilov.entities.ApiResponse;
 import com.butilov.entities.CurrencyEnum;
 import com.butilov.services.CacheService;
-import com.butilov.services.RequestPerformerService;
+import com.butilov.services.RESTClient;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,9 +18,9 @@ import java.util.concurrent.Executors;
  */
 @Controller
 public class ConsoleController {
-    public ConsoleController(CacheService mCacheService, RequestPerformerService mRequestPerformerService) {
-        this.mCacheService = mCacheService;
-        this.mRequestPerformerService = mRequestPerformerService;
+    public ConsoleController(CacheService cacheService, RESTClient RESTClient) {
+        mCacheService = cacheService;
+        mRESTClient = RESTClient;
     }
 
     private String inputCurrency(String displayText) {
@@ -48,12 +49,15 @@ public class ConsoleController {
             if (cachedData != null) { // todo сделать проверку на сегодняшнее число
                 System.out.println(cachedData);
             } else {
-                ApiResponse apiResponse = mRequestPerformerService.performGetRequest(fromCurrency, toCurrency);
+                ApiResponse apiResponse = null;
+                try {
+                    apiResponse = mRESTClient.getResponce(fromCurrency, toCurrency);
+                } catch (IOException ex) {
+                    System.out.println(StringConstants.ERROR);
+                }
                 if (apiResponse != null) {
                     System.out.println(apiResponse.toString());
                     mCacheService.saveDataToFile(apiResponse.toString(), fromCurrency, toCurrency);
-                } else {
-                    System.out.println(StringConstants.ERROR);
                 }
             }
         });
@@ -62,5 +66,5 @@ public class ConsoleController {
 
     private CacheService mCacheService;
 
-    private RequestPerformerService mRequestPerformerService;
+    private RESTClient mRESTClient;
 }
